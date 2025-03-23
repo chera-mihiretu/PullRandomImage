@@ -25,6 +25,7 @@ app.get('/check', async (req, res) => {
 const TELEGRAM_API = `${BASE_URL}${BOT_API}`
 
 
+
 const TELEGRAM_END_POINT = `${NGROK}/myphoto`
 
 const TELEGRAM_WEBHOOK = `${TELEGRAM_API}/setWebhook?url=${TELEGRAM_END_POINT}`
