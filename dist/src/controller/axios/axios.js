@@ -13,14 +13,14 @@ function axiosInstance() {
             return axios_1.default.get(`/${methodName}`, { baseURL: `${BASE_URL}${BOT_API}/`, params: data });
         },
         post(methodName, data) {
-            console.log(`${BASE_URL}${BOT_API}/`);
             return (0, axios_1.default)({
                 method: 'post',
                 url: `/${methodName}`,
                 baseURL: `${BASE_URL}${BOT_API}/`,
-                data
+                data,
+                timeout: 5000
             });
-        }
+        },
     };
 }
 exports.default = axiosInstance;

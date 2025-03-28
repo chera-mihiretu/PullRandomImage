@@ -8,4 +8,8 @@ const index_1 = require("../controller/index");
 const telegramRouter = (0, express_1.default)();
 telegramRouter.post("/myphoto", index_1.postHandler);
 telegramRouter.get("/myphoto", index_1.getHandler);
+telegramRouter.get("/myphoto/like", (req, res) => {
+    console.log(req);
+    res.send({ ok: true });
+});
 exports.default = telegramRouter;
