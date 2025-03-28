@@ -13,6 +13,7 @@ exports.postHandler = postHandler;
 exports.getHandler = getHandler;
 exports.sendBasedOnText = sendBasedOnText;
 const replay_1 = require("./message/replay");
+const sendingData_1 = require("./sendingData");
 function postHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("received", req.body);
@@ -38,25 +39,22 @@ function sendBasedOnText(reply) {
         if (command[0] == '/') {
             switch (command) {
                 case '/start':
-                    reply.text = "Welcome to the bot. You can use the /help command to see all available commands.";
+                    reply.text = "Welcome to the test Telegram bot! You can use the /help command to see all available commands.";
                     return (0, replay_1.replayToMessage)(reply);
-                case '/surprise':
-                    const imageToSend = {
-                        chat_id: reply.chat_id,
-                        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/220px-Image_created_with_a_mobile_phone.png",
-                        caption: "Choose your caption",
-                        reply_markup: JSON.stringify({
-                            inline_keyboard: [
-                                [{ text: "👍 Like", callback_data: "like" }],
-                                [{ text: "👎 Dislike", callback_data: "dislike" }]
-                            ]
-                        })
-                    };
-                    return sendImage(imageToSend);
-                case '/year':
-                // TODO : Implement the logic of year pull
+                case '/image':
+                    sendingData_1.image.chat_id = reply.chat_id;
+                    return sendImage(sendingData_1.image);
+                case '/audio':
+                    sendingData_1.audio.chat_id = reply.chat_id;
+                    return (0, replay_1.replayToMessageWithAudio)(sendingData_1.audio);
+                case '/document':
+                    sendingData_1.document.chat_id = reply.chat_id;
+                    return (0, replay_1.replayToMessageWithDocument)(sendingData_1.document);
+                case "/video":
+                    sendingData_1.video.chat_id = reply.chat_id;
+                    return (0, replay_1.replayToMessageWithVideo)(sendingData_1.video);
                 case '/help':
-                    reply.text = "Available commands: /start and /surprice. /start starts the command and /surprice pulls an image from photo.";
+                    reply.text = "Available commands: \n /start - Start the bot \n /image - Send an image \n /audio - Send an audio file \n /document - Send a document \n /video - Send a video";
                     return (0, replay_1.replayToMessage)(reply);
                 default:
                     reply.text = "Apologies, I don't understand that command. Please use /help to see all available commands.";
@@ -72,6 +70,21 @@ function sendBasedOnText(reply) {
 function sendImage(reply) {
     return __awaiter(this, void 0, void 0, function* () {
         return (0, replay_1.replayToMessageWithImage)(reply);
+    });
+}
+function sendAudio(reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return (0, replay_1.replayToMessageWithAudio)(reply);
+    });
+}
+function sendDocument(reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return (0, replay_1.replayToMessageWithDocument)(reply);
+    });
+}
+function sendVideo(reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return (0, replay_1.replayToMessageWithVideo)(reply);
     });
 }
 function getHandler(_req, res) {
