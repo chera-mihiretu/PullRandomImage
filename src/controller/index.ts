@@ -53,18 +53,18 @@ async function sendBasedOnText(reply: Message) {
 
             case '/audio':
                 audio.chat_id = reply.chat_id
-                return replayToMessageWithAudio(
+                return sendAudio(
                     audio
                 );
             case '/document':
                 document.chat_id = reply.chat_id;
-                return replayToMessageWithDocument(
+                return sendDocument(
                     document
                 );
 
             case "/video": 
                 video.chat_id = reply.chat_id;
-                return replayToMessageWithVideo(
+                return sendVideo(
                     video
                 );
             case '/help':
