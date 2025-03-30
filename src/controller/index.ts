@@ -4,90 +4,80 @@ import {
     replayToMessageWithImage, 
     replayToMessageWithAudio, 
     replayToMessageWithDocument, 
-    replayToMessageWithVideo 
+    replayToMessageWithVideo, 
+    editMessage,
+    sendCallBack
 } from "./message/replay";
-import { Message, Image, Audio, Document, Video } from "../types/types";
-import {message, audio, image, document, video} from './sendingData';
+import {  Image, Audio, Document, Video, Edit } from "../types/types";
+
+type Like = {
+    liked: boolean
+    disliked: boolean
+}
+const callBacks: { [key: string]: string } = {};
+const liked: [number, Like][] = [];
 
 async function postHandler(req: Request, res: Response) {
-    console.log("received", req.body);
-    const { chat, text } = req.body.message;
-    console.log("received", text);
+    
+    console.log(req.body);
+    
+    if (req.body.callback_query) {
+
+        const edit : Edit = req.body.callback_query.message;
+        edit.chat_id = req.body.callback_query.message.chat.id;
+        edit.text = "New Hellow World!";
+        edit.reply_markup = JSON.stringify({
+            inline_keyboard: [
+                [
+                    {
+                        text: "New Like",
+                        callback_data: "admin/like"
+                    },
+                    {
+                        text: "Another Like",
+                        callback_data: "admin/dislike"
+                    }
+                ]
+            ]
+        });
+
+        await editMessage(edit);
+
+        await sendCallBack(req.body.callback_query.id);
+        
+    }else {
+        const message: Edit = req.body.message;
+        const text = "Hellow World";
+        message.chat_id = req.body.message.chat.id;
+        message.text = text
+        
+        message.reply_markup = JSON.stringify({
+            inline_keyboard: [
+            [
+                {
+                text: "Like",
+                callback_data: "admin/like"
+                },
+                {
+                text: "Dislike",
+                callback_data: "admin/dislike"
+                }
+            ]
+            ]
+        });
+        
 
 
-    try {
-        const reply : Message = {
-            chat_id: chat.id,
-            text: text,
-        };
 
-
-        const result = await sendBasedOnText(reply);
-
-        res.sendStatus(200);
-
-    } catch (error) {
-        console.error("Error processing bot reply:", error);
+        await replayToMessage(message);
     }
+
+    res.sendStatus(200);
+
+    
 }
 
 
-async function sendBasedOnText(reply: Message) {
-
-    const command = reply.text.split(' ')[0];
-
-    console.log("command", command);
-
-    if (command[0] == '/') {
-
-        switch (command) {
-            case '/start':
-                reply.text = "Welcome to the test Telegram bot! You can use the /help command to see all available commands.";
-                return replayToMessage(
-                    reply
-                );
-            case '/image':
-                image.chat_id = reply.chat_id;
-
-                return sendImage(image);
-
-            case '/audio':
-                audio.chat_id = reply.chat_id
-                return sendAudio(
-                    audio
-                );
-            case '/document':
-                document.chat_id = reply.chat_id;
-                return sendDocument(
-                    document
-                );
-
-            case "/video": 
-                video.chat_id = reply.chat_id;
-                return sendVideo(
-                    video
-                );
-            case '/help':
-                reply.text = "Available commands: \n /start - Start the bot \n /image - Send an image \n /audio - Send an audio file \n /document - Send a document \n /video - Send a video";
-                return replayToMessage(
-                    reply
-                );
-            default:
-                reply.text = "Apologies, I don't understand that command. Please use /help to see all available commands.";
-                return replayToMessage(
-                    reply
-                );
-
-        }
-
-    }else {
-        reply.text = "Apologies, please use a proper command (e.g., /start, /help) instead of plain text.";
-        return replayToMessage(
-            reply
-        );
-    }
-    
-} 
 
 
 async function sendImage (reply : Image){
@@ -105,9 +95,14 @@ async function sendDocument (reply : Document){
 async function sendVideo (reply : Video){
     return replayToMessageWithVideo(reply);
 }
+async function editMessageReplyMarkup(edit: Edit ) {
+
+    editMessage(edit);
+
+}
 
 async function getHandler(_req: Request, res: Response) {
     res.sendStatus(200);
 }
 
-export { postHandler, getHandler, sendBasedOnText };
+export { postHandler, getHandler }

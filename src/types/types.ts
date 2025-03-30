@@ -33,5 +33,11 @@ interface Document {
     reply_markup? : string
 }
 
+interface Edit {
+    chat_id: number;
+    message_id: number;
+    text?: string;
+    reply_markup?:string
+}
 
-export {Message, Image, Audio, Video, Document};
+export {Message, Image, Audio, Video, Document, Edit};

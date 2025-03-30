@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const setup_1 = __importDefault(require("./config/setup"));
+const setup_1 = require("./config/setup");
 const router_1 = __importDefault(require("./router/router"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -32,7 +32,7 @@ const TELEGRAM_END_POINT = `${NGROK}/myphoto`;
 const TELEGRAM_WEBHOOK = `${TELEGRAM_API}/setWebhook?url=${TELEGRAM_END_POINT}`;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, setup_1.default)(TELEGRAM_WEBHOOK);
+        yield (0, setup_1.init)(TELEGRAM_WEBHOOK);
         console.log(`Server is running on port ${PORT}`);
     }
     catch (error) {

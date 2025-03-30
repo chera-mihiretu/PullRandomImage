@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import init from './config/setup';
+import {init} from './config/setup';
 import telegramRouter from './router/router';
 const app = express();
 

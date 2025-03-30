@@ -12,4 +12,4 @@ async function init(url: string) {
     console.log(res.data);
 }
 
-export default init;
+export {init, HTTPS_AGENT};

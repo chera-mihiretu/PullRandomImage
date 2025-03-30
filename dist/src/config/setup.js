@@ -45,11 +45,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HTTPS_AGENT = void 0;
+exports.init = init;
 const axios_1 = __importDefault(require("axios"));
 const http = __importStar(require("http"));
 const https = __importStar(require("https"));
 const HTTP_AGENT = new http.Agent({ family: 4 });
 const HTTPS_AGENT = new https.Agent({ family: 4 });
+exports.HTTPS_AGENT = HTTPS_AGENT;
 function init(url) {
     return __awaiter(this, void 0, void 0, function* () {
         const isHttps = url.startsWith('https://');
@@ -58,4 +61,3 @@ function init(url) {
         console.log(res.data);
     });
 }
-exports.default = init;
