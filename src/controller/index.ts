@@ -8,6 +8,7 @@ import {
     editMessage,
     sendCallBack
 } from "./message/replay";
+import { createClient } from "redis";
 import {  Image, Audio, Document, Video, Edit } from "../types/types";
 
 type Like = {
@@ -17,7 +18,29 @@ type Like = {
 const callBacks: { [key: string]: string } = {};
 const liked: [number, Like][] = [];
 
+
 async function postHandler(req: Request, res: Response) {
+    
+    
+    const client = createClient({
+        url: process.env.REDIS_URL,
+    });
+
+
+    client.on('error', (err) => {
+        console.error('Redis Client Error', err);
+    });
+
+    client.on('connect', () => {
+        console.log('Redis client connected');
+    });
+
+    try {
+        await client.connect();
+    } catch (err) {
+        console.error('Failed to connect to Redis server', err);
+    }
+    
     
     console.log(req.body);
     
@@ -46,6 +69,7 @@ async function postHandler(req: Request, res: Response) {
         await sendCallBack(req.body.callback_query.id);
         
     }else {
+
         const message: Edit = req.body.message;
         const text = "Hellow World";
         message.chat_id = req.body.message.chat.id;

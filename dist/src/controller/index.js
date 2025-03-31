@@ -12,10 +12,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postHandler = postHandler;
 exports.getHandler = getHandler;
 const replay_1 = require("./message/replay");
+const redis_1 = require("redis");
 const callBacks = {};
 const liked = [];
 function postHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        const client = (0, redis_1.createClient)({
+            url: process.env.REDIS_URL,
+        });
+        client.on('error', (err) => {
+            console.error('Redis Client Error', err);
+        });
+        client.on('connect', () => {
+            console.log('Redis client connected');
+        });
+        try {
+            yield client.connect();
+        }
+        catch (err) {
+            console.error('Failed to connect to Redis server', err);
+        }
         console.log(req.body);
         if (req.body.callback_query) {
             const edit = req.body.callback_query.message;
