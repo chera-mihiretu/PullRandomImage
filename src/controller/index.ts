@@ -8,6 +8,7 @@ import {
     editMessage,
     sendCallBack
 } from "./message/replay";
+import {client} from "../config/setup";
 import { createClient } from "redis";
 import {  Image, Audio, Document, Video, Edit } from "../types/types";
 
@@ -22,24 +23,7 @@ const liked: [number, Like][] = [];
 async function postHandler(req: Request, res: Response) {
     
     
-    const client = createClient({
-        url: process.env.REDIS_URL,
-    });
-
-
-    client.on('error', (err) => {
-        console.error('Redis Client Error', err);
-    });
-
-    client.on('connect', () => {
-        console.log('Redis client connected');
-    });
-
-    try {
-        await client.connect();
-    } catch (err) {
-        console.error('Failed to connect to Redis server', err);
-    }
+    
     
     
     console.log(req.body);
@@ -71,7 +55,16 @@ async function postHandler(req: Request, res: Response) {
     }else {
 
         const message: Edit = req.body.message;
-        const text = "Hellow World";
+        
+        const key = req.body.message.chat.id.toString();
+        let newCount = await client.get(key) ?? "0";
+        console.log(client.get(key), message.message_id);
+        newCount = (parseInt(newCount) + 1).toString();
+        await client.set(key, newCount);
+        
+        
+        
+        const text = `Hellow World ${newCount}`;
         message.chat_id = req.body.message.chat.id;
         message.text = text
         

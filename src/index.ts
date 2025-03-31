@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import {init} from './config/setup';
 import telegramRouter from './router/router';
+import { startClinet } from './config/setup';
 const app = express();
 
 app.use(express.json());
@@ -33,6 +34,7 @@ const TELEGRAM_END_POINT = `${NGROK}/myphoto`
 const TELEGRAM_WEBHOOK = `${TELEGRAM_API}/setWebhook?url=${TELEGRAM_END_POINT}`
 
 app.listen(PORT, async () => {
+    startClinet();
     try {
         await init(TELEGRAM_WEBHOOK);
         console.log(`Server is running on port ${PORT}`);
@@ -40,3 +42,5 @@ app.listen(PORT, async () => {
         console.error('Failed to initialize webhook:', error);
     }
 });
+
+

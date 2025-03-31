@@ -12,26 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postHandler = postHandler;
 exports.getHandler = getHandler;
 const replay_1 = require("./message/replay");
-const redis_1 = require("redis");
+const setup_1 = require("../config/setup");
 const callBacks = {};
 const liked = [];
 function postHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const client = (0, redis_1.createClient)({
-            url: process.env.REDIS_URL,
-        });
-        client.on('error', (err) => {
-            console.error('Redis Client Error', err);
-        });
-        client.on('connect', () => {
-            console.log('Redis client connected');
-        });
-        try {
-            yield client.connect();
-        }
-        catch (err) {
-            console.error('Failed to connect to Redis server', err);
-        }
+        var _a;
         console.log(req.body);
         if (req.body.callback_query) {
             const edit = req.body.callback_query.message;
@@ -56,7 +42,12 @@ function postHandler(req, res) {
         }
         else {
             const message = req.body.message;
-            const text = "Hellow World";
+            const key = req.body.message.chat.id.toString();
+            let newCount = (_a = yield setup_1.client.get(key)) !== null && _a !== void 0 ? _a : "0";
+            console.log(setup_1.client.get(key), message.message_id);
+            newCount = (parseInt(newCount) + 1).toString();
+            yield setup_1.client.set(key, newCount);
+            const text = `Hellow World ${newCount}`;
             message.chat_id = req.body.message.chat.id;
             message.text = text;
             message.reply_markup = JSON.stringify({

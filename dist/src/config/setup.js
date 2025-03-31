@@ -45,11 +45,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HTTPS_AGENT = void 0;
+exports.client = exports.HTTPS_AGENT = void 0;
 exports.init = init;
+exports.startClinet = startClinet;
 const axios_1 = __importDefault(require("axios"));
 const http = __importStar(require("http"));
 const https = __importStar(require("https"));
+const redis_1 = require("redis");
 const HTTP_AGENT = new http.Agent({ family: 4 });
 const HTTPS_AGENT = new https.Agent({ family: 4 });
 exports.HTTPS_AGENT = HTTPS_AGENT;
@@ -59,5 +61,25 @@ function init(url) {
         const config = isHttps ? { httpsAgent: HTTPS_AGENT } : { httpAgent: HTTP_AGENT };
         const res = yield axios_1.default.get(url, config);
         console.log(res.data);
+    });
+}
+const client = (0, redis_1.createClient)({
+    url: process.env.REDIS_URL,
+});
+exports.client = client;
+client.on('error', (err) => {
+    console.error('Redis Client Error', err);
+});
+client.on('connect', () => {
+    console.log('Redis client connected');
+});
+function startClinet() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield client.connect();
+        }
+        catch (err) {
+            console.error('Failed to connect to Redis server', err);
+        }
     });
 }

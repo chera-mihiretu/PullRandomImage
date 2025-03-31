@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const setup_1 = require("./config/setup");
 const router_1 = __importDefault(require("./router/router"));
+const setup_2 = require("./config/setup");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 dotenv_1.default.config();
@@ -31,6 +32,7 @@ const TELEGRAM_API = `${BASE_URL}${BOT_API}`;
 const TELEGRAM_END_POINT = `${NGROK}/myphoto`;
 const TELEGRAM_WEBHOOK = `${TELEGRAM_API}/setWebhook?url=${TELEGRAM_END_POINT}`;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
+    (0, setup_2.startClinet)();
     try {
         yield (0, setup_1.init)(TELEGRAM_WEBHOOK);
         console.log(`Server is running on port ${PORT}`);
